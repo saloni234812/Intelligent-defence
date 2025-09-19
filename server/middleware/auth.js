@@ -5,7 +5,7 @@ function auth(requiredRole) {
     const token = (req.cookies && req.cookies.token) || (req.headers.authorization || '').replace('Bearer ', '');
     if (!token) return res.status(401).json({ error: 'Unauthorized' });
     try {
-      const payload = jwt.verify(token, process.env.JWT_SECRET);
+      const payload = jwt.verify(token, process.env.JWT_SECRET || 'default-secret-key');
       req.user = payload;
       if (requiredRole) {
         const roles = Array.isArray(payload.roles) ? payload.roles : [payload.role].filter(Boolean);
