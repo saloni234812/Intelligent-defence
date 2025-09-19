@@ -1,0 +1,44 @@
+[
+  {
+    "id": "a-1001",
+    "alert_type": "CRITICAL",
+    "title": "Intrusion detected at North Gate",
+    "description": "Unauthorized perimeter breach detected by motion sensors.",
+    "location": "Grid N-12",
+    "confidence": 92,
+    "status": "OPEN",
+    "created_at": "2025-09-18T09:15:00Z"
+  },
+  {
+    "id": "a-1002",
+    "alert_type": "HIGH",
+    "title": "UAV detected at 2km range",
+    "description": "Low-altitude UAV approaching from northeast.",
+    "location": "Grid E-07",
+    "confidence": 81,
+    "status": "OPEN",
+    "created_at": "2025-09-18T10:05:00Z"
+  },
+  {
+    "id": "a-1003",
+    "alert_type": "MEDIUM",
+    "title": "Unusual RF activity",
+    "description": "Spectrum analyzer reports intermittent spikes.",
+    "location": "Ops Sector 3",
+    "confidence": 64,
+    "status": "ACKNOWLEDGED",
+    "created_at": "2025-09-18T11:22:00Z"
+  },
+  {
+    "id": "a-1004",
+    "alert_type": "LOW",
+    "title": "Camera offline",
+    "description": "Maintenance required for camera C-14.",
+    "location": "Hangar B",
+    "confidence": 55,
+    "status": "OPEN",
+    "created_at": "2025-09-17T20:40:00Z"
+  }
+]
+
+

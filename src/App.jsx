@@ -1,76 +1,107 @@
-import React, { useState, useEffect } from 'react';
-import { Shield, Radar, Camera, AlertTriangle, Eye, Lock, Send, CheckCircle, Clock, Zap } from 'lucide-react';
-import AICommand from './components/AICommand';
-import AuditLog from './components/AuditLog';
-import ResponsePlaybooks from './components/ResponsePlaybooks';
-import SensorNetwork from './components/SensorNetwork';
-import StatusIndicator from './components/statusindicator';
+/* eslint-disable no-unused-vars */
+import React, { useEffect, useState } from 'react';
+import { Routes, Route, Navigate, Link } from 'react-router-dom';
+import Login from './components/Login';
+import MainPage from './pages/Main'; // legacy main view
+import Dashboard from './components/Dashboard';
 import TacticalMap from './components/TacticalMap';
-import ThreatAlerts from './components/ThreatAlerts';
 
 const App = () => {
-  const [currentTime, setCurrentTime] = useState(new Date());
+  const [user, setUser] = useState(null);
+  const [checkingAuth, setCheckingAuth] = useState(true);
 
+  // Check authentication on app load
   useEffect(() => {
-    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
-    return () => clearInterval(timer);
+    const checkAuth = async () => {
+      try {
+        const res = await fetch('http://localhost:5000/api/users/me', {
+          method: 'GET',
+          credentials: 'include', // send cookies
+        });
+        const data = await res.json();
+        if (res.ok) {
+          setUser(data.user);
+        } else {
+          setUser(null);
+        }
+      } catch (err) {
+        setUser(null);
+      } finally {
+        setCheckingAuth(false);
+      }
+    };
+
+    checkAuth();
   }, []);
 
+  // Callback when login/signup succeeds
+  const handleLogin = async () => {
+    try {
+      const res = await fetch('http://localhost:5000/api/users/me', {
+        method: 'GET',
+        credentials: 'include',
+      });
+      const data = await res.json();
+      if (res.ok) setUser(data.user);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  if (checkingAuth) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-gray-100 bg-slate-900">
+        Checking authentication...
+      </div>
+    );
+  }
+
+  const ProtectedRoute = ({ children }) => {
+    return user ? children : <Navigate to="/login" replace />;
+  };
+
   return (
-    <div className="bg-slate-900 text-gray-100 min-h-screen p-4">
-      <header className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-3">
-          <Shield className="w-8 h-8 text-cyan-400" />
-          <div>
-            <h1 className="text-xl font-mono text-cyan-400">AEGIS DEFENSE SYSTEM</h1>
-            <p className="text-sm text-gray-400">Advanced Tactical Operations Center</p>
-          </div>
-        </div>
-        <div className="flex items-center gap-4">
-          <div className="text-sm">
-            <Clock className="w-4 h-4 inline mr-2" />
-            {currentTime.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}, {currentTime.toLocaleTimeString('en-US', { hour12: false })}
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="bg-green-600 text-xs px-2 py-1 rounded text-white">OPERATIONAL</span>
-            <span className="bg-yellow-600 text-xs px-2 py-1 rounded text-white">THREAT LEVEL: ELEVATED</span>
-          </div>
-        </div>
-      </header>
-
-      <div className="mb-4">
-        <div className="flex items-center justify-between text-xs font-mono">
-          <div className="flex items-center gap-6">
-            <span>System Status: <span className="text-green-400">NOMINAL</span></span>
-            <span>Network: <span className="text-green-400">SECURE</span></span>
-            <span>AI Core: <span className="text-green-400">ACTIVE</span></span>
-          </div>
-          <div className="flex items-center gap-6">
-            <span>Uptime: <span className="text-cyan-400">99.7%</span></span>
-            <span>Version: <span className="text-gray-400">AEGIS-2.1.4</span></span>
-            <span>Classification: <span className="text-red-400">CONFIDENTIAL</span></span>
-          </div>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-1 space-y-6">
-          <SensorNetwork />
-          <TacticalMap />
-        </div>
-        
-        <div className="lg:col-span-1 space-y-6">
-          <ResponsePlaybooks />
-          <AICommand />
-        </div>
-        
-        <div className="lg:col-span-1 space-y-6">
-          <ThreatAlerts />
-          <AuditLog />
-        </div>
-      </div>
-    </div>
+    <>
+      <Routes>
+        <Route path="/login" element={<Login onLogin={handleLogin} />} />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <div className="p-4">
+                <Nav />
+                <Dashboard />
+              </div>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/tactical"
+          element={
+            <ProtectedRoute>
+              <div className="p-4">
+                <Nav />
+                <TacticalMap />
+              </div>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/"
+          element={user ? <MainPage user={user} setUser={setUser} /> : <Navigate to="/login" replace />}
+        />
+        <Route path="*" element={<Navigate to={user ? '/' : '/login'} replace />} />
+      </Routes>
+    </>
   );
 };
 
 export default App;
+
+const Nav = () => (
+  <div className="mb-4 flex gap-3 text-sm">
+    <Link to="/dashboard" className="bg-slate-800 border border-slate-700 px-3 py-1 rounded text-gray-200 hover:border-cyan-400">Dashboard</Link>
+    <Link to="/tactical" className="bg-slate-800 border border-slate-700 px-3 py-1 rounded text-gray-200 hover:border-cyan-400">Tactical Map</Link>
+    <Link to="/" className="bg-slate-800 border border-slate-700 px-3 py-1 rounded text-gray-200 hover:border-cyan-400">Main</Link>
+  </div>
+);

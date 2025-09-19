@@ -1,15 +1,49 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 
 const TacticalMap = () => {
-  const [mapData, setMapData] = useState([
-    { id: 1, x: 15, y: 45, type: 'friendly', status: 'active' },
-    { id: 2, x: 85, y: 25, type: 'friendly', status: 'active' },
-    { id: 3, x: 25, y: 75, type: 'threat', status: 'critical' },
-    { id: 4, x: 55, y: 35, type: 'neutral', status: 'alert' },
-    { id: 5, x: 75, y: 65, type: 'friendly', status: 'active' },
-    { id: 6, x: 45, y: 85, type: 'friendly', status: 'active' }
-  ]);
+  const [area, setArea] = useState('alpha');
+  const [mode, setMode] = useState('online'); // online | offline | maintenance
+  const [title, setTitle] = useState('Sector Alpha-7');
+  const [grid, setGrid] = useState('34°N 118°W');
+  const [mapData, setMapData] = useState([]);
+
+  const API_BASE = useMemo(() => import.meta.env.VITE_API_BASE || 'http://localhost:8000', []);
+
+  const loadOffline = async (key) => {
+    const file = key === 'alpha' ? '/src/assets/maps/alpha.json' : '/src/assets/maps/bravo.json';
+    const res = await fetch(file);
+    const data = await res.json();
+    setTitle(data.name);
+    setGrid(data.grid);
+    setMapData(data.markers);
+  };
+
+  const loadOnline = async () => {
+    try {
+      // Use backend maps endpoint for live area data
+      const res = await fetch(`${API_BASE}/maps/${area}`);
+      if (!res.ok) throw new Error('failed');
+      const data = await res.json();
+      setTitle(data.name || 'Live Operational View');
+      setGrid(data.grid || 'dynamic');
+      setMapData(Array.isArray(data.markers) ? data.markers : []);
+    } catch (e) {
+      // Fallback to offline if server unreachable
+      await loadOffline(area);
+    }
+  };
+
+  useEffect(() => {
+    if (mode === 'online') loadOnline();
+    if (mode === 'offline') loadOffline(area);
+    if (mode === 'maintenance') {
+      setTitle('Maintenance Mode');
+      setGrid('systems check');
+      setMapData([]);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [area, mode]);
 
   const getMarkerColor = (type, status) => {
     if (type === 'threat') return 'bg-red-500';
@@ -26,7 +60,18 @@ const TacticalMap = () => {
       <div className="flex items-center justify-between mb-4">
         <div>
           <h3 className="text-cyan-400 font-mono text-sm">TACTICAL MAP</h3>
-          <div className="text-xs text-gray-400">Sector Alpha-7 | Grid Reference: 34°N 118°W</div>
+          <div className="text-xs text-gray-400">{title} | Grid Reference: {grid}</div>
+        </div>
+        <div className="flex items-center gap-2">
+          <select value={area} onChange={e => setArea(e.target.value)} className="bg-slate-900 border border-slate-600 text-xs rounded px-2 py-1 text-gray-300">
+            <option value="alpha">Alpha</option>
+            <option value="bravo">Bravo</option>
+          </select>
+          <select value={mode} onChange={e => setMode(e.target.value)} className="bg-slate-900 border border-slate-600 text-xs rounded px-2 py-1 text-gray-300">
+            <option value="online">Online</option>
+            <option value="offline">Offline</option>
+            <option value="maintenance">Maintenance</option>
+          </select>
         </div>
       </div>
       

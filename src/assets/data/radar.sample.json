@@ -1,0 +1,8 @@
+[
+  { "radarId": "R-ALPHA", "timestamp": "2025-09-18T09:15:00Z", "rangeMeters": 850, "azimuthDeg": 34, "elevationDeg": 5, "rcs": 12.5, "velocityMps": 45, "confidence": 0.86 },
+  { "radarId": "R-ALPHA", "timestamp": "2025-09-18T09:15:02Z", "rangeMeters": 820, "azimuthDeg": 35, "elevationDeg": 6, "rcs": 14.2, "velocityMps": 47, "confidence": 0.88 },
+  { "radarId": "R-BRAVO", "timestamp": "2025-09-18T09:15:04Z", "rangeMeters": 2200, "azimuthDeg": 120, "elevationDeg": 2, "rcs": 6.7, "velocityMps": -20, "confidence": 0.72 },
+  { "radarId": "R-BRAVO", "timestamp": "2025-09-18T09:15:06Z", "rangeMeters": 2150, "azimuthDeg": 121, "elevationDeg": 2, "rcs": 7.1, "velocityMps": -22, "confidence": 0.70 }
+]
+
+

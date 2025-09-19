@@ -1,0 +1,14 @@
+{
+  "name": "Sector Bravo-2",
+  "grid": "33°N 117°W",
+  "markers": [
+    { "id": 201, "x": 20, "y": 20, "type": "friendly", "status": "active" },
+    { "id": 202, "x": 80, "y": 30, "type": "friendly", "status": "active" },
+    { "id": 203, "x": 50, "y": 60, "type": "neutral", "status": "alert" },
+    { "id": 204, "x": 70, "y": 80, "type": "threat", "status": "critical" }
+  ]
+}
+
+
+
+
