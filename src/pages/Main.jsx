@@ -9,6 +9,9 @@ import SensorNetwork from '../components/SensorNetwork';
 import TacticalMap from '../components/TacticalMap';
 import ThreatAlerts from '../components/ThreatAlerts';
 import Dashboard from '../components/Dashboard';
+import StatusIndicator from '../components/StatusIndicator';
+import ThreatTypesOverview from '../components/ThreatTypesOverview';
+import ThreatCatalog from '../components/ThreatCatalog';
 
 const Main = ({ setUser }) => {
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -20,7 +23,7 @@ const Main = ({ setUser }) => {
 
   const handleLogout = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/users/logout', {
+      const res = await fetch('/api/users/logout', {
         method: 'POST',
         credentials: 'include', // send cookies
       });
@@ -69,7 +72,7 @@ const Main = ({ setUser }) => {
       <div className="mb-4">
         <div className="flex items-center justify-between text-xs font-mono">
           <div className="flex items-center gap-6">
-            <span>System Status: <span className="text-green-400">NOMINAL</span></span>
+            <StatusIndicator status="ONLINE" label="System" showBackendStatus={true} />
             <span>Network: <span className="text-green-400">SECURE</span></span>
             <span>AI Core: <span className="text-green-400">ACTIVE</span></span>
           </div>
@@ -97,6 +100,8 @@ const Main = ({ setUser }) => {
         
         <div className="lg:col-span-1 space-y-6">
           <ThreatAlerts />
+          <ThreatTypesOverview />
+          <ThreatCatalog />
           <AuditLog />
         </div>
       </div>

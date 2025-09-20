@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Radar, Camera, Filter } from "lucide-react";
-import StatusIndicator from "./statusindicator";
+import StatusIndicator from "./StatusIndicator";
+import apiService from "../services/api";
 
 const SensorNetwork = () => {
   const [sensors, setSensors] = useState([]);
@@ -14,15 +15,15 @@ const SensorNetwork = () => {
     async function load() {
       try {
         setLoading(true);
-        const res = await fetch("http://localhost:5000/api/sensors");
-        const json = await res.json();
+        const data = await apiService.getSensors();
         if (!isMounted) return;
-        setSensors(json.sensors || []);
-        setSummary(json.summary || summary);
+        setSensors(data.sensors || []);
+        setSummary(data.summary || summary);
         setError("");
       } catch (e) {
         if (!isMounted) return;
         setError("Failed to load sensors");
+        console.error('Sensor load error:', e);
       } finally {
         if (isMounted) setLoading(false);
       }

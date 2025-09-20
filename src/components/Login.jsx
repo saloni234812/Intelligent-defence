@@ -16,8 +16,8 @@ const Login = ({ onLogin }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     username: '',
-    email: '',
-    password: '',
+    email: 'demo@aegis.com',
+    password: 'password',
     confirmPassword: '',
     clearanceLevel: 'Level-1'
   });
@@ -58,8 +58,8 @@ const Login = ({ onLogin }) => {
         : { name: formData.username, email: formData.email, password: formData.password };
 
       const endpoint = isLogin
-        ? 'http://localhost:5000/api/users/login'
-        : 'http://localhost:5000/api/users/signup';
+        ? '/api/users/login'
+        : '/api/users/signup';
 
       const res = await fetch(endpoint, {
         method: 'POST',
@@ -77,7 +77,12 @@ const Login = ({ onLogin }) => {
         if (onLogin) onLogin(); // Refresh auth state in App.jsx
       }
     } catch (err) {
-      setServerMessage('Network error, try again.');
+      console.error('Login error:', err);
+      if (err.message.includes('fetch')) {
+        setServerMessage('Cannot connect to server. Please check if the backend is running.');
+      } else {
+        setServerMessage('Network error, try again.');
+      }
     } finally {
       setLoading(false);
     }

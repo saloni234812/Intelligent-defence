@@ -2,42 +2,172 @@
   {
     "id": "a-1001",
     "alert_type": "CRITICAL",
+    "threat_type": "PHYSICAL_INTRUSION",
+    "threat_category": "PHYSICAL",
+    "threat_subcategory": "Perimeter Breach",
     "title": "Intrusion detected at North Gate",
-    "description": "Unauthorized perimeter breach detected by motion sensors.",
+    "description": "Unauthorized perimeter breach detected by motion sensors. Individual wearing dark clothing observed scaling fence.",
     "location": "Grid N-12",
     "confidence": 92,
     "status": "OPEN",
+    "source": "SENSOR",
+    "priority": 1,
+    "tags": ["perimeter", "intrusion", "unauthorized"],
+    "metadata": {
+      "sensor_id": "MOTION_001",
+      "detection_method": "motion_sensor",
+      "weather": "clear",
+      "time_of_day": "night"
+    },
     "created_at": "2025-09-18T09:15:00Z"
   },
   {
     "id": "a-1002",
     "alert_type": "HIGH",
+    "threat_type": "UAV_THREAT",
+    "threat_category": "AERIAL",
+    "threat_subcategory": "Commercial Drone",
     "title": "UAV detected at 2km range",
-    "description": "Low-altitude UAV approaching from northeast.",
+    "description": "Low-altitude UAV approaching from northeast. Appears to be commercial quadcopter with camera payload.",
     "location": "Grid E-07",
     "confidence": 81,
     "status": "OPEN",
+    "source": "RADAR",
+    "priority": 2,
+    "tags": ["uav", "drone", "aerial", "surveillance"],
+    "metadata": {
+      "radar_id": "RADAR_ALPHA",
+      "altitude": 120,
+      "speed": 25,
+      "payload": "camera"
+    },
     "created_at": "2025-09-18T10:05:00Z"
   },
   {
     "id": "a-1003",
     "alert_type": "MEDIUM",
+    "threat_type": "RF_INTERFERENCE",
+    "threat_category": "COMMUNICATION",
+    "threat_subcategory": "Signal Jamming",
     "title": "Unusual RF activity",
-    "description": "Spectrum analyzer reports intermittent spikes.",
+    "description": "Spectrum analyzer reports intermittent spikes in 2.4GHz band. Possible jamming attempt.",
     "location": "Ops Sector 3",
     "confidence": 64,
     "status": "ACKNOWLEDGED",
+    "source": "SYSTEM",
+    "priority": 5,
+    "tags": ["rf", "interference", "jamming", "communication"],
+    "metadata": {
+      "frequency": "2.4GHz",
+      "signal_strength": -45,
+      "duration": "intermittent"
+    },
     "created_at": "2025-09-18T11:22:00Z"
   },
   {
     "id": "a-1004",
     "alert_type": "LOW",
+    "threat_type": "MAINTENANCE_REQUIRED",
+    "threat_category": "EQUIPMENT",
+    "threat_subcategory": "Equipment Degradation",
     "title": "Camera offline",
-    "description": "Maintenance required for camera C-14.",
+    "description": "Maintenance required for camera C-14. Image quality degraded over past 24 hours.",
     "location": "Hangar B",
     "confidence": 55,
     "status": "OPEN",
+    "source": "SYSTEM",
+    "priority": 8,
+    "tags": ["maintenance", "camera", "equipment"],
+    "metadata": {
+      "camera_id": "CAM_C14",
+      "last_maintenance": "2025-08-15",
+      "issue_type": "image_quality"
+    },
     "created_at": "2025-09-17T20:40:00Z"
+  },
+  {
+    "id": "a-1005",
+    "alert_type": "CRITICAL",
+    "threat_type": "CYBER_INTRUSION",
+    "threat_category": "CYBER",
+    "threat_subcategory": "Network Intrusion",
+    "title": "Unauthorized network access detected",
+    "description": "Multiple failed login attempts followed by successful breach. Data exfiltration in progress.",
+    "location": "Network Infrastructure",
+    "confidence": 95,
+    "status": "OPEN",
+    "source": "AI",
+    "priority": 1,
+    "tags": ["cyber", "intrusion", "data_breach", "critical"],
+    "metadata": {
+      "ip_address": "192.168.1.100",
+      "attack_vector": "brute_force",
+      "data_affected": "classified"
+    },
+    "created_at": "2025-09-18T12:30:00Z"
+  },
+  {
+    "id": "a-1006",
+    "alert_type": "HIGH",
+    "threat_type": "FIRE_THREAT",
+    "threat_category": "ENVIRONMENTAL",
+    "threat_subcategory": "Structure Fire",
+    "title": "Fire detected in Generator Room",
+    "description": "Smoke and heat sensors activated. Fire suppression system engaged.",
+    "location": "Generator Room A",
+    "confidence": 88,
+    "status": "OPEN",
+    "source": "SENSOR",
+    "priority": 2,
+    "tags": ["fire", "emergency", "generator", "smoke"],
+    "metadata": {
+      "sensor_id": "FIRE_001",
+      "temperature": 180,
+      "suppression_active": true
+    },
+    "created_at": "2025-09-18T13:15:00Z"
+  },
+  {
+    "id": "a-1007",
+    "alert_type": "MEDIUM",
+    "threat_type": "RECONNAISSANCE",
+    "threat_category": "INTELLIGENCE",
+    "threat_subcategory": "Surveillance Activity",
+    "title": "Suspicious surveillance activity",
+    "description": "Individual observed taking photographs of facility from public area.",
+    "location": "Perimeter Road",
+    "confidence": 72,
+    "status": "OPEN",
+    "source": "MANUAL",
+    "priority": 4,
+    "tags": ["surveillance", "reconnaissance", "photography"],
+    "metadata": {
+      "reporter": "Security Guard Alpha",
+      "vehicle_plate": "ABC-123",
+      "duration": "15_minutes"
+    },
+    "created_at": "2025-09-18T14:20:00Z"
+  },
+  {
+    "id": "a-1008",
+    "alert_type": "HIGH",
+    "threat_type": "VEHICLE_THREAT",
+    "threat_category": "PHYSICAL",
+    "threat_subcategory": "Suspicious Vehicle",
+    "title": "Suspicious vehicle approaching main gate",
+    "description": "White van with tinted windows approaching at high speed. Driver not responding to radio calls.",
+    "location": "Main Gate",
+    "confidence": 85,
+    "status": "ACKNOWLEDGED",
+    "source": "MANUAL",
+    "priority": 3,
+    "tags": ["vehicle", "suspicious", "gate", "high_speed"],
+    "metadata": {
+      "vehicle_type": "white_van",
+      "speed": 45,
+      "plate_visible": false
+    },
+    "created_at": "2025-09-18T15:45:00Z"
   }
 ]
 

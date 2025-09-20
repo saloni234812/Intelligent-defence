@@ -1,60 +1,85 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Shield, Radar, Camera, AlertTriangle, Eye, Lock, Send, CheckCircle, Clock, Zap } from "lucide-react";
-
+import apiService from "../services/api";
 
 const ResponsePlaybooks = () => {
-  const [playbooks, setPlaybooks] = useState([
-    {
-      id: 1,
-      name: 'Deploy Patrol Response Team',
-      description: 'to threat location',
-      status: 'AVAILABLE',
-      priority: 'HIGH',
-      eta: '3m',
-      isActive: false
-    },
-    {
-      id: 2,
-      name: 'LOCKDOWN PROTOCOL',
-      description: 'Secure all access points and initiate perimeter lockdown',
-      status: 'AVAILABLE',
-      priority: 'CRITICAL',
-      eta: '30s',
-      isActive: false
-    },
-    {
-      id: 3,
-      name: 'LAUNCH UAV RECON',
-      description: 'Deploy drone for aerial surveillance and assessment',
-      status: 'IN PROGRESS',
-      priority: 'HIGH',
-      eta: '45s',
-      isActive: true
-    },
-    {
-      id: 4,
-      name: 'ALERT COMMAND CENTER',
-      description: 'Notify higher command of critical threat status',
-      status: 'COMPLETED',
-      priority: 'MEDIUM',
-      eta: '1s',
-      isActive: false
-    },
-    {
-      id: 5,
-      name: 'ACTIVATE EMP SHIELD',
-      description: 'Deploy electronic countermeasures in affected zone',
-      status: 'AVAILABLE',
-      priority: 'CRITICAL',
-      eta: '10s',
-      isActive: false
-    }
-  ]);
+  const [playbooks, setPlaybooks] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const executePlaybook = (id) => {
-    setPlaybooks(prev => prev.map(p => 
-      p.id === id ? { ...p, status: 'IN PROGRESS', isActive: true } : p
-    ));
+  // Load playbooks from API
+  useEffect(() => {
+    const loadPlaybooks = async () => {
+      try {
+        setLoading(true);
+        const data = await apiService.getPlaybooks();
+        setPlaybooks(data.playbooks || data || []);
+      } catch (error) {
+        console.error('Failed to load playbooks:', error);
+        // Fallback to default playbooks if API fails
+        setPlaybooks([
+          {
+            id: 1,
+            name: 'Deploy Patrol Response Team',
+            description: 'to threat location',
+            status: 'AVAILABLE',
+            priority: 'HIGH',
+            eta: '3m',
+            isActive: false
+          },
+          {
+            id: 2,
+            name: 'LOCKDOWN PROTOCOL',
+            description: 'Secure all access points and initiate perimeter lockdown',
+            status: 'AVAILABLE',
+            priority: 'CRITICAL',
+            eta: '30s',
+            isActive: false
+          },
+          {
+            id: 3,
+            name: 'LAUNCH UAV RECON',
+            description: 'Deploy drone for aerial surveillance and assessment',
+            status: 'IN PROGRESS',
+            priority: 'HIGH',
+            eta: '45s',
+            isActive: true
+          },
+          {
+            id: 4,
+            name: 'ALERT COMMAND CENTER',
+            description: 'Notify higher command of critical threat status',
+            status: 'COMPLETED',
+            priority: 'MEDIUM',
+            eta: '1s',
+            isActive: false
+          },
+          {
+            id: 5,
+            name: 'ACTIVATE EMP SHIELD',
+            description: 'Deploy electronic countermeasures in affected zone',
+            status: 'AVAILABLE',
+            priority: 'CRITICAL',
+            eta: '10s',
+            isActive: false
+          }
+        ]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadPlaybooks();
+  }, []);
+
+  const executePlaybook = async (id) => {
+    try {
+      await apiService.executePlaybook(id);
+      setPlaybooks(prev => prev.map(p => 
+        p.id === id ? { ...p, status: 'IN PROGRESS', isActive: true } : p
+      ));
+    } catch (error) {
+      console.error('Failed to execute playbook:', error);
+    }
   };
 
   const activeCount = playbooks.filter(p => p.status === 'IN PROGRESS').length;

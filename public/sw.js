@@ -24,6 +24,21 @@ self.addEventListener('activate', (event) => {
 // Cache-first for static, network-first for API
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
+  // Only handle same-origin requests
+  if (url.origin !== self.location.origin) {
+    return; // let the request pass through untouched
+  }
+
+  // Ignore API routes to avoid interfering with backend calls
+  if (url.pathname.startsWith('/api/')) {
+    return; // do not intercept API requests
+  }
+
+  // Only cache GET requests
+  if (event.request.method !== 'GET') {
+    return;
+  }
+
   if (url.pathname.startsWith('/alerts') || url.pathname.startsWith('/maps')) {
     event.respondWith(networkFirst(event.request));
     return;
@@ -34,10 +49,18 @@ self.addEventListener('fetch', (event) => {
 async function cacheFirst(request) {
   const cached = await caches.match(request);
   if (cached) return cached;
-  const response = await fetch(request);
-  const cache = await caches.open(CACHE_NAME);
-  cache.put(request, response.clone());
-  return response;
+  try {
+    const response = await fetch(request);
+    if (!response || response.status !== 200 || response.type === 'opaque') {
+      return response;
+    }
+    const cache = await caches.open(CACHE_NAME);
+    cache.put(request, response.clone());
+    return response;
+  } catch (e) {
+    // On failure, just propagate the error
+    throw e;
+  }
 }
 
 async function networkFirst(request) {
@@ -52,7 +75,3 @@ async function networkFirst(request) {
     throw e;
   }
 }
-
-
-
-

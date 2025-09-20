@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Shield, Radar, Camera, AlertTriangle, Eye, Lock, Send, CheckCircle, Clock, Zap} from "lucide-react";
-
+import apiService from "../services/api";
 
 const AICommand = () => {
   const [command, setCommand] = useState('');
@@ -9,8 +9,9 @@ const AICommand = () => {
     { id: 2, text: 'status report on sector 7', type: 'user', time: '14:21:30' },
     { id: 3, text: 'Sector 7 Status: 1 critical threat detected at Grid 34.2N, 118.1W. Unauthorized vehicle identified. UAV-ALPHA dispatched for reconnaissance. Recommend patrol unit intercept.', type: 'system', time: '14:21:32' }
   ]);
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!command.trim()) return;
 
@@ -22,18 +23,32 @@ const AICommand = () => {
     };
 
     setMessages(prev => [...prev, newMessage]);
+    setLoading(true);
 
-    setTimeout(() => {
-      const response = {
+    try {
+      // Send command to AI API
+      const response = await apiService.sendAICommand(command);
+      
+      const systemResponse = {
         id: messages.length + 2,
-        text: 'Command acknowledged. Processing tactical analysis...',
+        text: response.message || 'Command acknowledged. Processing tactical analysis...',
         type: 'system',
         time: new Date().toLocaleTimeString('en-US', { hour12: false })
       };
-      setMessages(prev => [...prev, response]);
-    }, 1000);
-
-    setCommand('');
+      setMessages(prev => [...prev, systemResponse]);
+    } catch (error) {
+      console.error('AI command failed:', error);
+      const errorResponse = {
+        id: messages.length + 2,
+        text: 'Command processing failed. Please try again.',
+        type: 'system',
+        time: new Date().toLocaleTimeString('en-US', { hour12: false })
+      };
+      setMessages(prev => [...prev, errorResponse]);
+    } finally {
+      setLoading(false);
+      setCommand('');
+    }
   };
 
   const suggestions = ['"deploy patrol to sector 7"', '"lockdown zone"', '"threat assessment"'];

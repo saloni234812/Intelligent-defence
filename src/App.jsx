@@ -13,20 +13,27 @@ const App = () => {
   // Check authentication on app load
   useEffect(() => {
     const checkAuth = async () => {
+      console.log('Starting authentication check...');
       try {
-        const res = await fetch('http://localhost:5000/api/users/me', {
+        const res = await fetch('/api/users/me', {
           method: 'GET',
           credentials: 'include', // send cookies
         });
+        console.log('Auth response status:', res.status);
         const data = await res.json();
+        console.log('Auth response data:', data);
         if (res.ok) {
           setUser(data.user);
+          console.log('Initial auth check - User authenticated:', data.user);
         } else {
           setUser(null);
+          console.log('Initial auth check - Not authenticated:', data);
         }
       } catch (err) {
         setUser(null);
+        console.log('Initial auth check - Error:', err);
       } finally {
+        console.log('Authentication check completed, setting checkingAuth to false');
         setCheckingAuth(false);
       }
     };
@@ -37,21 +44,30 @@ const App = () => {
   // Callback when login/signup succeeds
   const handleLogin = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/users/me', {
+      const res = await fetch('/api/users/me', {
         method: 'GET',
         credentials: 'include',
       });
       const data = await res.json();
-      if (res.ok) setUser(data.user);
+      if (res.ok) {
+        setUser(data.user);
+        console.log('User authenticated:', data.user);
+      } else {
+        console.error('Auth check failed:', data);
+      }
     } catch (err) {
-      console.error(err);
+      console.error('Auth check error:', err);
     }
   };
 
   if (checkingAuth) {
     return (
       <div className="min-h-screen flex items-center justify-center text-gray-100 bg-slate-900">
-        Checking authentication...
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-cyan-400 mx-auto mb-4"></div>
+          <p>Checking authentication...</p>
+          <p className="text-sm text-gray-400 mt-2">If this takes too long, check the browser console for errors</p>
+        </div>
       </div>
     );
   }

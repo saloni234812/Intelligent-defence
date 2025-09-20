@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Activity, AlertTriangle, SignalHigh, ShieldHalf, TrendingUp } from "lucide-react";
-
+import apiService from "../services/api";
 
 const formatPercent = (n) => `${Math.round((n || 0) * 10) / 10}%`;
 
@@ -48,23 +48,21 @@ const Dashboard = () => {
   const [filterType, setFilterType] = useState('ALL');
   const [dateFrom, setDateFrom] = useState('');
   const [minConfidence, setMinConfidence] = useState(0);
-  const API_BASE = useMemo(() => import.meta.env.VITE_API_BASE || 'http://localhost:8000', []);
+  const [loading, setLoading] = useState(true);
 
   const load = async () => {
     try {
-      const [a, b] = await Promise.all([
-        fetch(`${API_BASE}/alerts/stats/summary`).then(r => r.json()).catch(() => null),
-        fetch(`${API_BASE}/alerts/stats/trends?days=7`).then(r => r.json()).catch(() => null)
-      ]);
-      if (a) setSummary(a); else setSummary({ active_alerts: 3, critical_alerts: 1 });
-      if (b) {
-        const series = b.map(d => (d.critical + d.high + d.medium + d.low) || 0);
-        setTrends(series);
-      } else {
-        setTrends([2,3,4,5,6,7,5]);
-      }
+      setLoading(true);
+      const stats = await apiService.getAlertStats();
+      setSummary(stats.summary);
+      setTrends(stats.trends);
     } catch (e) {
-      // soft-fail; keep last values
+      console.error('Failed to load dashboard data:', e);
+      // Fallback to default values
+      setSummary({ active_alerts: 0, critical_alerts: 0, system_health: 0, uptime: 0 });
+      setTrends([2,3,4,5,6,7,5]);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -74,8 +72,8 @@ const Dashboard = () => {
     return () => clearInterval(id);
   }, []);
 
-  const uptime = 99.7;
-  const systemHealth = 0.96; // 0..1
+  const uptime = summary?.uptime || 99.7;
+  const systemHealth = (summary?.system_health || 96) / 100; // Convert to 0..1
 
   return (
     <div>

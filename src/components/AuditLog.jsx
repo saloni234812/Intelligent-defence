@@ -1,34 +1,85 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Shield, Radar, Camera, AlertTriangle, Eye, Lock, Send, CheckCircle, Clock, Zap} from "lucide-react";
-
+import apiService from "../services/api";
 
 const AuditLog = () => {
-  const logs = [
-    {
-      id: 1,
-      type: 'SECURITY',
-      event: 'THREAT_ACKNOWLEDGMENT',
-      description: 'Acknowledged critical threat alert TH-001',
-      operator: 'OPERATOR_01',
-      timestamp: '2024-01-15 14:23:15'
-    },
-    {
-      id: 2,
-      type: 'OPERATIONAL',
-      event: 'UAV_DEPLOYMENT',
-      description: 'UAV-ALPHA deployed to coordinates 34.2N 118.1W',
-      operator: 'SYSTEM',
-      timestamp: '2024-01-15 14:21:30'
-    },
-    {
-      id: 3,
-      type: 'ALERT',
-      event: 'THREAT_DETECTION',
-      description: 'Anomalous vehicle pattern detected - Classification: Critical',
-      operator: 'AI_CORE',
-      timestamp: '2024-01-15 14:20:45'
-    }
-  ];
+  const [logs, setLogs] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Load audit logs from API
+  useEffect(() => {
+    const loadLogs = async () => {
+      try {
+        setLoading(true);
+        // Note: This endpoint might not exist yet, so we'll use a fallback
+        const data = await apiService.request('/api/audit-logs').catch(() => null);
+        if (data) {
+          setLogs(data.logs || data || []);
+        } else {
+          // Fallback to default logs if API doesn't exist
+          setLogs([
+            {
+              id: 1,
+              type: 'SECURITY',
+              event: 'THREAT_ACKNOWLEDGMENT',
+              description: 'Acknowledged critical threat alert TH-001',
+              operator: 'OPERATOR_01',
+              timestamp: '2024-01-15 14:23:15'
+            },
+            {
+              id: 2,
+              type: 'OPERATIONAL',
+              event: 'UAV_DEPLOYMENT',
+              description: 'UAV-ALPHA deployed to coordinates 34.2N 118.1W',
+              operator: 'SYSTEM',
+              timestamp: '2024-01-15 14:21:30'
+            },
+            {
+              id: 3,
+              type: 'ALERT',
+              event: 'THREAT_DETECTION',
+              description: 'Anomalous vehicle pattern detected - Classification: Critical',
+              operator: 'AI_CORE',
+              timestamp: '2024-01-15 14:20:45'
+            }
+          ]);
+        }
+      } catch (error) {
+        console.error('Failed to load audit logs:', error);
+        // Use fallback logs
+        setLogs([
+          {
+            id: 1,
+            type: 'SECURITY',
+            event: 'THREAT_ACKNOWLEDGMENT',
+            description: 'Acknowledged critical threat alert TH-001',
+            operator: 'OPERATOR_01',
+            timestamp: '2024-01-15 14:23:15'
+          },
+          {
+            id: 2,
+            type: 'OPERATIONAL',
+            event: 'UAV_DEPLOYMENT',
+            description: 'UAV-ALPHA deployed to coordinates 34.2N 118.1W',
+            operator: 'SYSTEM',
+            timestamp: '2024-01-15 14:21:30'
+          },
+          {
+            id: 3,
+            type: 'ALERT',
+            event: 'THREAT_DETECTION',
+            description: 'Anomalous vehicle pattern detected - Classification: Critical',
+            operator: 'AI_CORE',
+            timestamp: '2024-01-15 14:20:45'
+          }
+        ]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadLogs();
+  }, []);
 
   const getEventColor = (type) => {
     switch(type) {

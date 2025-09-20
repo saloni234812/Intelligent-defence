@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import apiService from '../services/api';
 
 const levelColor = (lvl) => {
   switch(lvl){
@@ -13,16 +14,34 @@ const RadarMonitor = () => {
   const [detections, setDetections] = useState([]);
   const [insights, setInsights] = useState([]);
   const [connected, setConnected] = useState(false);
+  const [loading, setLoading] = useState(true);
   const eventSrcRef = useRef(null);
-  const API_BASE = useMemo(() => import.meta.env.VITE_API_BASE || 'http://localhost:5000', []);
 
+  // Load initial radar data
   useEffect(() => {
-    const url = `${API_BASE.replace(/\/$/, '')}/api/radar/stream`;
-    const es = new EventSource(url, { withCredentials: true });
-    eventSrcRef.current = es;
-    es.onopen = () => setConnected(true);
-    es.onerror = () => setConnected(false);
-    es.onmessage = (ev) => {
+    const loadInitialData = async () => {
+      try {
+        setLoading(true);
+        const data = await apiService.getRadarDetections({ limit: 50 });
+        setDetections(data || []);
+      } catch (error) {
+        console.error('Failed to load initial radar data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadInitialData();
+  }, []);
+
+  // Set up real-time radar stream
+  useEffect(() => {
+    const ws = apiService.createRadarWebSocket();
+    eventSrcRef.current = ws;
+    
+    ws.onopen = () => setConnected(true);
+    ws.onerror = () => setConnected(false);
+    ws.onmessage = (ev) => {
       try {
         const data = JSON.parse(ev.data);
         if (data.type === 'detection') {
@@ -30,10 +49,19 @@ const RadarMonitor = () => {
         } else if (data.type === 'ai_insight') {
           setInsights(prev => [data, ...prev].slice(0, 50));
         }
-      } catch {}
+      } catch (error) {
+        console.error('Failed to parse radar data:', error);
+      }
     };
-    return () => { try { es.close(); } catch {} };
-  }, [API_BASE]);
+    
+    return () => { 
+      try { 
+        ws.close(); 
+      } catch (error) {
+        console.error('Error closing radar WebSocket:', error);
+      }
+    };
+  }, []);
 
   return (
     <div className="bg-slate-800/50 border border-cyan-500/30 rounded-lg p-4">
