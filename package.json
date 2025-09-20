@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "name": "saloni",
   "private": true,
   "version": "0.0.0",
@@ -31,4 +32,69 @@
     "globals": "^16.3.0",
     "vite": "^7.1.2"
   }
+=======
+  "name": "intelligence-defense-system",
+  "version": "1.0.0",
+  "description": "AI-powered intelligence defense system with real-time monitoring and tactical maps",
+  "main": "proxy-server.js",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd server && npm run dev",
+    "dev:frontend": "cd client && npm run dev",
+    "dev:proxy": "node proxy-server.js",
+    "dev:all": "concurrently \"npm run dev:proxy\" \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "build": "npm run build:frontend && npm run build:backend",
+    "build:frontend": "cd client && npm run build",
+    "build:backend": "cd server && npm run build",
+    "start": "node proxy-server.js",
+    "start:backend": "cd server && npm start",
+    "start:frontend": "cd client && npm run preview",
+    "test": "npm run test:backend && npm run test:frontend",
+    "test:backend": "cd server && npm test",
+    "test:frontend": "cd client && npm test",
+    "lint": "npm run lint:backend && npm run lint:frontend",
+    "lint:backend": "cd server && npm run lint",
+    "lint:frontend": "cd client && npm run lint",
+    "docker:build": "docker-compose -f docker-compose.proxy.yml build",
+    "docker:up": "docker-compose -f docker-compose.proxy.yml up -d",
+    "docker:down": "docker-compose -f docker-compose.proxy.yml down",
+    "docker:logs": "docker-compose -f docker-compose.proxy.yml logs -f",
+    "setup": "npm install && cd server && npm install && cd ../client && npm install",
+    "clean": "rm -rf node_modules server/node_modules client/node_modules",
+    "health": "curl -s http://localhost:3000/health | jq .",
+    "logs": "tail -f logs/*.log"
+  },
+  "keywords": [
+    "intelligence",
+    "defense",
+    "ai",
+    "monitoring",
+    "security",
+    "real-time",
+    "tactical-maps",
+    "threat-detection"
+  ],
+  "author": "Intelligence Defense Team",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "http-proxy-middleware": "^2.0.6",
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "helmet": "^7.1.0",
+    "express-rate-limit": "^7.1.5"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/intelligence-defense-system.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-org/intelligence-defense-system/issues"
+  },
+  "homepage": "https://github.com/your-org/intelligence-defense-system#readme"
+>>>>>>> 8f99f30fabd2ccd98cd79efc8b48363f8a331413
 }
