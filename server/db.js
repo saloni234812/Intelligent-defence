@@ -1,6 +1,72 @@
 // Mock database for development - replace with real Supabase in production
 let mockData = {
-  alerts: [],
+  alerts: [
+    {
+      id: '1',
+      alert_type: 'CRITICAL',
+      title: 'Unauthorized Aircraft Detected',
+      description: 'Low-flying aircraft detected in restricted airspace',
+      location: 'Sector Alpha-7',
+      confidence: 95,
+      status: 'ACTIVE',
+      threat_type: 'AIRCRAFT_THREAT',
+      threat_category: 'AERIAL',
+      source: 'RADAR',
+      created_at: new Date(Date.now() - 1000 * 60 * 5).toISOString() // 5 minutes ago
+    },
+    {
+      id: '2',
+      alert_type: 'HIGH',
+      title: 'Perimeter Breach Detected',
+      description: 'Motion sensors triggered at perimeter fence',
+      location: 'North Gate',
+      confidence: 88,
+      status: 'ACTIVE',
+      threat_type: 'PHYSICAL_INTRUSION',
+      threat_category: 'PHYSICAL',
+      source: 'SENSOR',
+      created_at: new Date(Date.now() - 1000 * 60 * 15).toISOString() // 15 minutes ago
+    },
+    {
+      id: '3',
+      alert_type: 'MEDIUM',
+      title: 'Suspicious Network Activity',
+      description: 'Multiple failed login attempts detected',
+      location: 'Network Segment B',
+      confidence: 72,
+      status: 'INVESTIGATING',
+      threat_type: 'CYBER_INTRUSION',
+      threat_category: 'CYBER',
+      source: 'SYSTEM',
+      created_at: new Date(Date.now() - 1000 * 60 * 30).toISOString() // 30 minutes ago
+    },
+    {
+      id: '4',
+      alert_type: 'HIGH',
+      title: 'UAV Threat Detected',
+      description: 'Unmanned aerial vehicle spotted in restricted zone',
+      location: 'Sector Bravo-3',
+      confidence: 91,
+      status: 'ACTIVE',
+      threat_type: 'UAV_THREAT',
+      threat_category: 'AERIAL',
+      source: 'RADAR',
+      created_at: new Date(Date.now() - 1000 * 60 * 45).toISOString() // 45 minutes ago
+    },
+    {
+      id: '5',
+      alert_type: 'LOW',
+      title: 'Equipment Maintenance Required',
+      description: 'Camera system requires calibration',
+      location: 'Tower 12',
+      confidence: 100,
+      status: 'ACKNOWLEDGED',
+      threat_type: 'MAINTENANCE_REQUIRED',
+      threat_category: 'EQUIPMENT',
+      source: 'SYSTEM',
+      created_at: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString() // 2 hours ago
+    }
+  ],
   radar_detections: [],
   playbooks: [],
   users_app: [
@@ -24,6 +90,15 @@ let mockData = {
       id: '3',
       name: 'Test User',
       email: 'test@test.com',
+      password_hash: '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
+      role: 'User',
+      created_at: new Date().toISOString()
+    },
+    // Demo credentials
+    {
+      id: '4',
+      name: 'Demo User',
+      email: 'demo@aegis.com',
       password_hash: '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
       role: 'User',
       created_at: new Date().toISOString()

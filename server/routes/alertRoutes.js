@@ -20,7 +20,7 @@ function validate(schema) {
   };
 }
 
-router.get('/', auth('Operator'), ctrl.list);
+router.get('/', ctrl.list); // Temporarily removed auth for demo
 router.post('/', auth('Operator'), validate(createSchema), ctrl.create);
 router.post('/:id/ack', auth('Operator'), ctrl.ack);
 

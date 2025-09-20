@@ -26,6 +26,20 @@ router.post('/login', validate(Joi.object({
 router.get('/me', authMw(), ctrl.me);
 router.post('/logout', ctrl.logout);
 
+// Change password
+router.post('/change-password', authMw(), validate(Joi.object({
+  currentPassword: Joi.string().required(),
+  newPassword: Joi.string().min(6).required()
+})), ctrl.changePassword);
+
+// Update profile (name only for now)
+router.put('/me', authMw(), validate(Joi.object({
+  name: Joi.string().min(1).required()
+})), ctrl.updateProfile);
+
+// Refresh access token using refresh cookie
+router.post('/refresh', ctrl.refresh);
+
 module.exports = router;
 
 

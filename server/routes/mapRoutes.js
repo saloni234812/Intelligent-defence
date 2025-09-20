@@ -1,7 +1,25 @@
-const router = require('express').Router();
+const express = require('express');
+const router = express.Router();
+const mapController = require('../controllers/mapController');
 const auth = require('../middleware/auth');
 
-// Mock map data for now - in production this would come from a database
+// Map data routes
+router.get('/status', mapController.getMapStatus);
+router.get('/radar', mapController.getRadarStations);
+router.get('/cameras', mapController.getCameraStations);
+router.get('/sensors', mapController.getSensorStations);
+router.get('/zones', mapController.getSecurityZones);
+router.get('/statistics', mapController.getMapStatistics);
+
+// AI Monitoring routes
+router.post('/ai/start', auth('Operator'), mapController.startAIMonitoring);
+router.post('/ai/stop', auth('Operator'), mapController.stopAIMonitoring);
+router.get('/threats', mapController.getThreats);
+router.get('/threats/severity/:severity', mapController.getThreatsBySeverity);
+router.get('/threats/recent', mapController.getRecentThreats);
+router.delete('/threats', auth('Operator'), mapController.clearThreats);
+
+// Legacy map data routes (for backward compatibility)
 const mapData = {
   alpha: {
     name: 'Sector Alpha-7',

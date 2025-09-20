@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const { THREAT_TYPES, getThreatTypeById, getAllThreatTypes, getThreatTypesByCategory, getThreatTypesBySeverity } = require('../constants/threatTypes');
+const { getAllThreatRoles, getThreatRoleById } = require('../constants/threatRoles');
 
 // Get all threat types
 router.get('/', (req, res) => {
@@ -129,3 +130,35 @@ router.get('/categories/list', (req, res) => {
 });
 
 module.exports = router;
+
+// Additional endpoints for threat roles
+router.get('/roles', (req, res) => {
+  try {
+    const roles = getAllThreatRoles();
+    res.json({ success: true, data: roles, count: roles.length });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Failed to fetch threat roles', error: error.message });
+  }
+});
+
+router.get('/roles/:id', (req, res) => {
+  try {
+    const role = getThreatRoleById(req.params.id);
+    if (!role) return res.status(404).json({ success: false, message: 'Role not found for threat id', id: req.params.id });
+    res.json({ success: true, data: { id: req.params.id, ...role } });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Failed to fetch threat role', error: error.message });
+  }
+});
+
+// Combined endpoint: returns all threat types with role information if available
+router.get('/with/roles', (req, res) => {
+  try {
+    const types = getAllThreatTypes();
+    const roles = getAllThreatRoles().reduce((acc, r) => { acc[r.id] = r; return acc; }, {});
+    const merged = types.map(t => ({ ...t, role_info: roles[t.id] || null }));
+    res.json({ success: true, data: merged, count: merged.length });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Failed to fetch threat types with roles', error: error.message });
+  }
+});
